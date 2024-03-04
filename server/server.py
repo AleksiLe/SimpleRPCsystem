@@ -35,9 +35,24 @@ with SimpleXMLRPCServer(('localhost', 8000),
             timestamp.text = timeData
             tree.write('./server/db.xml')
             return "Added to old topic"
-        
     server.register_function(inputData, 'inputData')
 
-
+    def getDataByTopic(topic):
+        tree = ET.parse('./server/db.xml')
+        topics = tree.getroot()
+        topicRoot = topics.find(".//topic[@name='%s']" % topic)
+        if (topicRoot == None):
+            return "No notes under the topic"
+        else:
+            string = ""
+            for descendant in topicRoot.iter():
+                if (descendant.tag == "note"):
+                    string += "Note: %s" % descendant.get('name')
+                elif (descendant.tag == "text"):
+                    string += " %s" % descendant.text
+                elif (descendant.tag == "timestamp"):
+                    string += " at %s" % descendant.text.strip()
+            return string
+    server.register_function(getDataByTopic, 'getDataByTopic')
     # Run the server's main loop
     server.serve_forever()
