@@ -1,6 +1,27 @@
 import xmlrpc.client
 import datetime
 
+def searchWiki(proxy):
+    searchTerm = input("Give search term: ")
+    permission = input("Do you want to append search to topic? (y/n): ")
+    if (permission == "y"):
+        topic = input("Give topic name: ")
+        try:
+            print(proxy.searchWiki(searchTerm, topic))
+        except xmlrpc.client.Fault as err:
+            print("A fault occurred")
+            print("Fault code: %d" % err.faultCode)
+            print("Fault string: %s" % err.faultString)
+    if (permission == "n"):
+        try:
+            print(proxy.searchWiki(searchTerm, ""))
+        except xmlrpc.client.Fault as err:
+            print("A fault occurred")
+            print("Fault code: %d" % err.faultCode)
+            print("Fault string: %s" % err.faultString)
+    else:
+        print("Not a valid input")
+
 def getTopic(proxy):
     topic = input("Give topic name: ")
     try:
@@ -39,6 +60,8 @@ def options(proxy):
                 inputData(proxy)
             case "2":
                 getTopic(proxy)
+            case "3":
+                searchWiki(proxy)
             case _:
                 print("Please give suggested input")
 
