@@ -5,14 +5,14 @@ def searchWiki(proxy):
     searchTerm = input("Give search term: ")
     permission = input("Do you want to append search to topic? (y/n): ")
     if (permission == "y"):
-        topic = input("Give topic name: ")
+        topic = input("Give topic name (Empty input does not create topic): ")
         try:
             print(proxy.searchWiki(searchTerm, topic))
         except xmlrpc.client.Fault as err:
             print("A fault occurred")
             print("Fault code: %d" % err.faultCode)
             print("Fault string: %s" % err.faultString)
-    if (permission == "n"):
+    elif (permission == "n"):
         try:
             print(proxy.searchWiki(searchTerm, ""))
         except xmlrpc.client.Fault as err:
@@ -31,7 +31,7 @@ def getTopic(proxy):
         print("Fault code: %d" % err.faultCode)
         print("Fault string: %s" % err.faultString)
     return None
-
+ 
 def inputData(proxy):
     topic = input("Give topic name: ")
     note = input("Give note name: ")
