@@ -2,6 +2,7 @@ from xmlrpc.server import SimpleXMLRPCServer
 from xmlrpc.server import SimpleXMLRPCRequestHandler
 import xml.etree.ElementTree as ET
 import requests
+import datetime
 # Restrict to a particular path.
 class RequestHandler(SimpleXMLRPCRequestHandler):
     rpc_paths = ('/RPC2',)
@@ -69,12 +70,15 @@ with SimpleXMLRPCServer(('localhost', 8000),
         response = requests.get(url, params=params)
         data = response.json()
         if (data[0]):
-            print("Link: ", data[3])
-            print("Description: ", data[2][0])
-       
-        if (topic != ""): # Add the query to topic
-            pass
-        return "Testing" #https://phabricator.wikimedia.org/T241437
+            if (topic == ""): # Add the query to topic
+                return data[3][0]
+            else:
+                print(data[3][0])
+                return inputData(topic, searchTerm, data[3][0], datetime.datetime.now().strftime("%m/%d/%Y - %H:%M:%S")) #https://phabricator.wikimedia.org/T241437 
+        else:
+            return "No results found"
+        
+        
         
     server.register_function(searchWiki, 'searchWiki')
     # Run the server's main loop
