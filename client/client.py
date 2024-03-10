@@ -52,6 +52,7 @@ def options(proxy):
         print("0) End program")
         print("1) Add entry")
         print("2) Get topic")
+        print("3) Search Wikipedia")
         choise = input("What you want to do: ")
         match choise:
             case "0":
