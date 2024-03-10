@@ -12,6 +12,7 @@ with SimpleXMLRPCServer(('localhost', 8000),
         allow_none=True, requestHandler=RequestHandler) as server:
     server.register_introspection_functions()
 
+    #Takes in topic, note, text and time and adds them to the db.xml
     def inputData(topicData, noteData, textData, timeData):
         tree = ET.parse('./server/db.xml')
         topics = tree.getroot()
@@ -39,6 +40,7 @@ with SimpleXMLRPCServer(('localhost', 8000),
             return "Added to old topic"
     server.register_function(inputData, 'inputData')
 
+    #Takes in topic and returns all notes under that topic
     def getDataByTopic(topic):
         tree = ET.parse('./server/db.xml')
         topics = tree.getroot()
@@ -57,6 +59,7 @@ with SimpleXMLRPCServer(('localhost', 8000),
             return string
     server.register_function(getDataByTopic, 'getDataByTopic')
 
+    #Takes in a search term and returns the first link from wikipedia
     def searchWiki(searchTerm, topic):
         url = "https://en.wikipedia.org/w/api.php"
         params = {
@@ -77,8 +80,6 @@ with SimpleXMLRPCServer(('localhost', 8000),
                 return inputData(topic, searchTerm, data[3][0], datetime.datetime.now().strftime("%m/%d/%Y - %H:%M:%S")) #https://phabricator.wikimedia.org/T241437 
         else:
             return "No results found"
-        
-        
         
     server.register_function(searchWiki, 'searchWiki')
     # Run the server's main loop
