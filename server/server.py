@@ -1,6 +1,7 @@
 from xmlrpc.server import SimpleXMLRPCServer
 from xmlrpc.server import SimpleXMLRPCRequestHandler
 import xml.etree.ElementTree as ET
+import requests
 # Restrict to a particular path.
 class RequestHandler(SimpleXMLRPCRequestHandler):
     rpc_paths = ('/RPC2',)
@@ -54,5 +55,27 @@ with SimpleXMLRPCServer(('localhost', 8000),
                     string += " at %s" % descendant.text.strip()
             return string
     server.register_function(getDataByTopic, 'getDataByTopic')
+
+    def searchWiki(searchTerm, topic):
+        url = "https://en.wikipedia.org/w/api.php"
+        params = {
+            "action": "opensearch",
+            "search": searchTerm,
+            "limit": "1",
+            "namespace": "0",
+            "format": "json"
+        }
+
+        response = requests.get(url, params=params)
+        data = response.json()
+        if (data[0]):
+            print("Link: ", data[3])
+            print("Description: ", data[2][0])
+       
+        if (topic != ""): # Add the query to topic
+            pass
+        return "Testing" #https://phabricator.wikimedia.org/T241437
+        
+    server.register_function(searchWiki, 'searchWiki')
     # Run the server's main loop
     server.serve_forever()
